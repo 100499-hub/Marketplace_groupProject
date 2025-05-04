@@ -17,7 +17,7 @@ export const Header = () => {
     }
     return(
         <div>
-            <h1>The JWT App</h1>
+            <h1>Marketplace</h1>
             <Link to={'/'} >Home</Link>
             {
                 isLoggedIn

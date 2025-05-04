@@ -1,26 +1,36 @@
-import { useState, useContext, createContext } from "react"
+import { createContext, useState, useEffect, useContext } from "react";
+import { getProfile } from "../services/user.service";
 
-const UserContext = createContext(  )
+const UserContext = createContext();
 
-export const useLogin = ()=> useContext( UserContext )
+export const useLogin = () => useContext(UserContext);
 
-export const UserContextProvider = ( { children } ) => {
-    const [ isLoggedIn, setIsLoggedIn ] = useState( false )
-    // We will use this boolean to track whether or not someone is logged in.
-    // This can be manipulated with the dev tools. However, all pages that we wish to hide from people that aren't logged in require credential when making the API requests. So even if they try to hack it they will won't be able to see anything that they shouldn't.
+export function UserContextProvider({ children }) {
+    const [isLoggedIn, setIsLoggedIn]   = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
-    const login = () => {
-        setIsLoggedIn( true )
-    }
+    // On mount, try to fetch profile
+    useEffect(() => {
+        getProfile()
+            .then(user => {
+                setCurrentUser(user);
+                setIsLoggedIn(true);
+            })
+            .catch(() => {
+                setCurrentUser(null);
+                setIsLoggedIn(false);
+            });
+    }, []);
 
-    const logout = () => {
-        setIsLoggedIn( false )
-    }
+    const login = ()   => setIsLoggedIn(true);
+    const logout = ()  => {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+    };
 
-
-    return(
-        <UserContext.Provider value={{ isLoggedIn, login, logout }}>
-            { children }
+    return (
+        <UserContext.Provider value={{ isLoggedIn, currentUser, login, logout }}>
+            {children}
         </UserContext.Provider>
-    )
+    );
 }

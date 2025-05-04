@@ -4,12 +4,13 @@ import cookieParser from 'cookie-parser'
 import { config } from 'dotenv'
 import { dbConnect } from './config/config.mongoose.js'
 import userRouter from './routes/user.routes.js'
+import itemRouter from './routes/item.routes.js'
 
 
 dbConnect()
 config()
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 8000;
 const app = express()
 
 app.use( cors( { origin: 'http://localhost:5173', credentials: true } ) )
@@ -21,6 +22,8 @@ app.use( cookieParser() )
 // When you import cookie-parser and use it as middleware, it automatically parses incoming cookies and makes them available in req.cookies
 // When used with app.use(cookieParser()), this middleware will parse any cookies sent with incoming HTTP requests and populate req.cookies with an object containing key-value pairs where the keys are cookie names and the values are the cookie values.
 app.use('/v1/user', userRouter)
+app.use('/v1/items', itemRouter);
+
 
 app.listen( PORT, ()=> console.log(`Listening on port ${PORT}`)  )
 
